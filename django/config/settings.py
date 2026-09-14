@@ -109,11 +109,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 _frontend_dist = BASE_DIR / 'frontend_dist'
 if _frontend_dist.exists():
-    _assets = _frontend_dist / 'assets'
-    if _assets.exists():
-        STATICFILES_DIRS = [_assets]
-    else:
-        STATICFILES_DIRS = [_frontend_dist]
+    STATICFILES_DIRS = [_frontend_dist]
 else:
     STATICFILES_DIRS = []
 
