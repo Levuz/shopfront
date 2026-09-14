@@ -9,8 +9,15 @@ urlpatterns = [
     path('api/', include('market.urls')),
 ]
 
+# Serve media files in BOTH dev and prod (dev only used for local testing)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # Production: serve uploaded media through Django
+    from django.views.static import serve
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
 
 # React SPA catch-all — must be LAST
 urlpatterns += [
