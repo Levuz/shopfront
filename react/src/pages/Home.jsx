@@ -43,7 +43,6 @@ export default function Home() {
 
   return (
     <div>
-      {/* -------------------------------------------------------- HERO */}
       <section className="relative overflow-hidden bg-slate-900">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(99,102,241,.35),transparent_55%)]" />
         <div className="absolute -left-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-600/25 blur-3xl" />
@@ -108,19 +107,47 @@ export default function Home() {
                         src={p.image_url}
                         alt={p.title}
                         className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement.innerHTML =
+                            '<div class="flex h-full w-full items-center justify-center text-slate-500"><span class="text-xs font-semibold uppercase tracking-wider">' +
+                            (p.category_name || 'Product') +
+                            '</span></div>';
+                        }}
                       />
                     ) : (
-                      <div className="h-full w-full" />
+                      <div className="flex h-full w-full items-center justify-center text-slate-500">
+                        <span className="text-xs font-semibold uppercase tracking-wider">
+                          {p.category_name || 'Product'}
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
               ))}
+              {products.length === 0 && !loading && (
+                <>
+                  {[0, 1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur ${
+                        i % 2 === 1 ? 'translate-y-6' : ''
+                      }`}
+                    >
+                      <div className="aspect-square bg-slate-800 flex items-center justify-center">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Coming soon
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------------- PERKS */}
       <section className="border-b border-slate-200 bg-white">
         <div className="container-app grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
           {PERKS.map(({ icon: Icon, title, text }) => (
@@ -137,7 +164,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* -------------------------------------------------- CATEGORIES */}
       {categories.length > 0 && (
         <section className="container-app py-14">
           <div className="mb-7 flex items-end justify-between">
@@ -175,7 +201,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* ---------------------------------------------------- FEATURED */}
       <section className="container-app pb-14">
         <div className="mb-7 flex items-end justify-between">
           <div>
@@ -221,7 +246,6 @@ export default function Home() {
         </div>
       </section>
 
-      
       <section className="container-app pb-16">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-indigo-700 px-8 py-12 sm:px-14 sm:py-16">
           <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
