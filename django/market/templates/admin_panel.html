@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · ShopFront</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .tab-btn.active { background-color: #4f46e5; color: white; }
+</style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased">
+
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
+  <header class="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Admin Panel</h1>
+      <p class="text-sm text-slate-500">Manage your ShopFront store</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/" class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm hover:bg-slate-50">← Store</a>
+      <form method="post" action="/django-admin/logout/" class="inline">
+        {% csrf_token %}
+        <button class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="mb-5 space-y-2">
+      {% for m in messages %}
+        <div class="rounded-lg border {% if m.tags == 'error' %}border-red-200 bg-red-50 text-red-800{% else %}border-emerald-200 bg-emerald-50 text-emerald-800{% endif %} px-4 py-3 text-sm">
+          {{ m }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs uppercase text-slate-500">Revenue</p>
+      <p class="mt-2 text-2xl font-extrabold">${{ total_revenue|floatformat:2 }}</p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs uppercase text-slate-500">Orders</p>
+      <p class="mt-2 text-2xl font-extrabold">{{ total_orders }}</p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs uppercase text-slate-500">Products</p>
+      <p class="mt-2 text-2xl font-extrabold">{{ total_products }}</p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs uppercase text-slate-500">Categories</p>
+      <p class="mt-2 text-2xl font-extrabold">{{ total_categories }}</p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs uppercase text-slate-500">Users</p>
+      <p class="mt-2 text-2xl font-extrabold">{{ total_users }}</p>
+    </div>
+  </div>
+
+  <div class="mb-5 flex flex-wrap gap-2">
+    <button data-tab="dashboard"  class="tab-btn active rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">📊 Dashboard</button>
+    <button data-tab="products"   class="tab-btn rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">📦 Products</button>
+    <button data-tab="orders"     class="tab-btn rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">🛒 Orders</button>
+    <button data-tab="categories" class="tab-btn rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">🗂 Categories</button>
+    <button data-tab="users"      class="tab-btn rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold">👥 Users</button>
+  </div>
+
+  <section data-panel="dashboard" class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h2 class="mb-4 text-lg font-bold">Recent orders</h2>
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3 text-left">Order</th>
+          <th class="px-4 py-3 text-left">Customer</th>
+          <th class="px-4 py-3 text-left">Status</th>
+          <th class="px-4 py-3 text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for o in recent_orders %}
+          <tr>
+            <td class="px-4 py-3 font-semibold">#{{ o.id }}</td>
+            <td class="px-4 py-3">{{ o.user.username }}</td>
+            <td class="px-4 py-3">{{ o.status }}</td>
+            <td class="px-4 py-3 text-right font-bold">${{ o.total_price|floatformat:2 }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">No orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section data-panel="products" class="hidden space-y-5">
+
+    <details class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <summary class="cursor-pointer text-base font-bold">➕ Add new product</summary>
+      <form method="post" enctype="multipart/form-data" class="mt-4 grid gap-4 sm:grid-cols-2">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_product">
+        <div class="sm:col-span-2">
+          <label class="mb-1 block text-sm font-medium">Title *</label>
+          <input name="title" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="mb-1 block text-sm font-medium">Description</label>
+          <textarea name="description" rows="2" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"></textarea>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Price ($)</label>
+          <input name="price" type="number" step="0.01" min="0" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Stock</label>
+          <input name="stock" type="number" min="0" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Category</label>
+          <select name="category" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+            <option value="">— None —</option>
+            {% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Image</label>
+          <input type="file" name="image" accept="image/*" class="w-full text-sm">
+        </div>
+        <label class="flex items-center gap-2 sm:col-span-2">
+          <input type="checkbox" name="is_active" checked class="h-4 w-4">
+          <span class="text-sm">Visible on storefront</span>
+        </label>
+        <div class="sm:col-span-2">
+          <button class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">Create product</button>
+        </div>
+      </form>
+    </details>
+
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+          <tr>
+            <th class="px-4 py-3 text-left">Title</th>
+            <th class="px-4 py-3 text-left">Category</th>
+            <th class="px-4 py-3 text-right">Price</th>
+            <th class="px-4 py-3 text-right">Stock</th>
+            <th class="px-4 py-3 text-center">Active</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for p in products %}
+            <tr>
+              <td class="px-4 py-3 font-semibold">{{ p.title }}</td>
+              <td class="px-4 py-3 text-slate-600">{{ p.category.name|default:"—" }}</td>
+              <td class="px-4 py-3 text-right">${{ p.price|floatformat:2 }}</td>
+              <td class="px-4 py-3 text-right">{{ p.stock }}</td>
+              <td class="px-4 py-3 text-center">{{ p.is_active|yesno:"✅,❌" }}</td>
+              <td class="px-4 py-3 text-right">
+                <details class="inline-block text-left">
+                  <summary class="cursor-pointer text-indigo-600 hover:underline">Edit</summary>
+                  <form method="post" enctype="multipart/form-data"
+                        class="absolute z-10 mt-2 w-80 space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_product">
+                    <input type="hidden" name="product_id" value="{{ p.id }}">
+                    <input name="title" value="{{ p.title }}" class="w-full rounded border px-2 py-1.5 text-sm">
+                    <textarea name="description" rows="2" class="w-full rounded border px-2 py-1.5 text-sm">{{ p.description }}</textarea>
+                    <div class="grid grid-cols-2 gap-2">
+                      <input name="price" type="number" step="0.01" value="{{ p.price }}" class="w-full rounded border px-2 py-1.5 text-sm">
+                      <input name="stock" type="number" value="{{ p.stock }}" class="w-full rounded border px-2 py-1.5 text-sm">
+                    </div>
+                    <select name="category" class="w-full rounded border px-2 py-1.5 text-sm">
+                      <option value="">— None —</option>
+                      {% for c in categories %}
+                        <option value="{{ c.id }}" {% if p.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <input type="file" name="image" class="w-full text-xs">
+                    <label class="flex items-center gap-2 text-sm">
+                      <input type="checkbox" name="is_active" {% if p.is_active %}checked{% endif %} class="h-4 w-4">
+                      Active
+                    </label>
+                    <button class="w-full rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Save</button>
+                  </form>
+                </details>
+
+                <form method="post" class="ml-3 inline" onsubmit="return confirm('Delete {{ p.title }}?')">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete_product">
+                  <input type="hidden" name="product_id" value="{{ p.id }}">
+                  <button class="text-red-600 hover:underline">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="px-4 py-8 text-center text-slate-500">No products yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section data-panel="orders" class="hidden overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3 text-left">Order</th>
+          <th class="px-4 py-3 text-left">Customer</th>
+          <th class="px-4 py-3 text-left">Date</th>
+          <th class="px-4 py-3 text-right">Total</th>
+          <th class="px-4 py-3 text-left">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for o in orders %}
+          <tr>
+            <td class="px-4 py-3 font-semibold">#{{ o.id }}</td>
+            <td class="px-4 py-3">
+              {{ o.user.username }}<br>
+              <span class="text-xs text-slate-500">{{ o.user.email }}</span>
+            </td>
+            <td class="px-4 py-3 text-xs text-slate-500">{{ o.created_at|date:"Y-m-d H:i" }}</td>
+            <td class="px-4 py-3 text-right font-bold">${{ o.total_price|floatformat:2 }}</td>
+            <td class="px-4 py-3">
+              <form method="post" class="inline">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_order">
+                <input type="hidden" name="order_id" value="{{ o.id }}">
+                <select name="status" onchange="this.form.submit()"
+                        class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold">
+                  {% for s in STATUSES %}
+                    <option value="{{ s }}" {% if o.status == s %}selected{% endif %}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">No orders yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section data-panel="categories" class="hidden space-y-5">
+    <form method="post" class="flex gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_category">
+      <input name="name" placeholder="New category name" required
+             class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm">
+      <button class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">
+        Add category
+      </button>
+    </form>
+
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+          <tr>
+            <th class="px-4 py-3 text-left">Name</th>
+            <th class="px-4 py-3 text-left">Slug</th>
+            <th class="px-4 py-3 text-right">Products</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for c in categories %}
+            <tr>
+              <td class="px-4 py-3 font-semibold">{{ c.name }}</td>
+              <td class="px-4 py-3 text-slate-500">{{ c.slug }}</td>
+              <td class="px-4 py-3 text-right">{{ c.product_count }}</td>
+              <td class="px-4 py-3 text-right">
+                <form method="post" class="inline" onsubmit="return confirm('Delete {{ c.name }}?')">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete_category">
+                  <input type="hidden" name="category_id" value="{{ c.id }}">
+                  <button class="text-red-600 hover:underline">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">No categories yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section data-panel="users" class="hidden space-y-5">
+
+    <details class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <summary class="cursor-pointer text-base font-bold">➕ Add new user</summary>
+      <form method="post" class="mt-4 grid gap-4 sm:grid-cols-2">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_user">
+        <div>
+          <label class="mb-1 block text-sm font-medium">Username *</label>
+          <input name="username" required class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Email</label>
+          <input name="email" type="email" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Password *</label>
+          <input name="password" type="password" required minlength="6"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Phone</label>
+          <input name="phone" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">First name</label>
+          <input name="first_name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium">Last name</label>
+          <input name="last_name" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="mb-1 block text-sm font-medium">Address</label>
+          <textarea name="address" rows="2" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"></textarea>
+        </div>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" name="is_admin" class="h-4 w-4">
+          <span class="text-sm">Admin (grants access to this panel)</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" name="is_customer" checked class="h-4 w-4">
+          <span class="text-sm">Customer</span>
+        </label>
+        <label class="flex items-center gap-2 sm:col-span-2">
+          <input type="checkbox" name="is_active" checked class="h-4 w-4">
+          <span class="text-sm">Active account</span>
+        </label>
+        <div class="sm:col-span-2">
+          <button class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">Create user</button>
+        </div>
+      </form>
+    </details>
+
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+          <tr>
+            <th class="px-4 py-3 text-left">Username</th>
+            <th class="px-4 py-3 text-left">Email</th>
+            <th class="px-4 py-3 text-left">Role</th>
+            <th class="px-4 py-3 text-center">Orders</th>
+            <th class="px-4 py-3 text-center">Active</th>
+            <th class="px-4 py-3 text-left">Joined</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for u in users %}
+            <tr>
+              <td class="px-4 py-3 font-semibold">
+                {{ u.username }}
+                {% if u.pk == current_user_id %}<span class="ml-1 text-xs text-indigo-600">(you)</span>{% endif %}
+              </td>
+              <td class="px-4 py-3 text-slate-600">{{ u.email|default:"—" }}</td>
+              <td class="px-4 py-3">
+                {% if u.is_admin %}
+                  <span class="rounded-full bg-indigo-100 px-2 py-1 text-xs font-bold text-indigo-700">👑 Admin</span>
+                {% else %}
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">🛒 Customer</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 text-center">{{ u.order_count }}</td>
+              <td class="px-4 py-3 text-center">{{ u.is_active|yesno:"✅,❌" }}</td>
+              <td class="px-4 py-3 text-xs text-slate-500">{{ u.date_joined|date:"Y-m-d" }}</td>
+              <td class="px-4 py-3 text-right">
+                <details class="inline-block text-left">
+                  <summary class="cursor-pointer text-indigo-600 hover:underline">Edit</summary>
+                  <form method="post"
+                        class="absolute z-10 mt-2 w-80 space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_user">
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    <input name="username" value="{{ u.username }}" class="w-full rounded border px-2 py-1.5 text-sm">
+                    <input name="email" type="email" value="{{ u.email }}" class="w-full rounded border px-2 py-1.5 text-sm">
+                    <div class="grid grid-cols-2 gap-2">
+                      <input name="first_name" value="{{ u.first_name }}" placeholder="First" class="w-full rounded border px-2 py-1.5 text-sm">
+                      <input name="last_name" value="{{ u.last_name }}" placeholder="Last" class="w-full rounded border px-2 py-1.5 text-sm">
+                    </div>
+                    <input name="phone" value="{{ u.phone }}" placeholder="Phone" class="w-full rounded border px-2 py-1.5 text-sm">
+                    <textarea name="address" rows="2" placeholder="Address" class="w-full rounded border px-2 py-1.5 text-sm">{{ u.address }}</textarea>
+                    <input name="password" type="password" placeholder="New password (leave blank to keep)"
+                           class="w-full rounded border px-2 py-1.5 text-sm">
+                    <label class="flex items-center gap-2 text-sm">
+                      <input type="checkbox" name="is_admin" {% if u.is_admin %}checked{% endif %} class="h-4 w-4">
+                      Admin
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                      <input type="checkbox" name="is_customer" {% if u.is_customer %}checked{% endif %} class="h-4 w-4">
+                      Customer
+                    </label>
+                    <label class="flex items-center gap-2 text-sm">
+                      <input type="checkbox" name="is_active" {% if u.is_active %}checked{% endif %} class="h-4 w-4">
+                      Active
+                    </label>
+                    <button class="w-full rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700">Save</button>
+                  </form>
+                </details>
+
+                {% if u.pk != current_user_id and not u.is_superuser %}
+                  <form method="post" class="ml-3 inline"
+                        onsubmit="return confirm('Delete user {{ u.username }}? This cannot be undone.')">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_user">
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    <button class="text-red-600 hover:underline">Delete</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="7" class="px-4 py-8 text-center text-slate-500">No users yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('[data-panel]');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabs.forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      panels.forEach(p => {
+        p.classList.toggle('hidden', p.dataset.panel !== target);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

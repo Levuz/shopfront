@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: shopfront
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "cd django && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+    healthCheckPath: /api/products/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "shopfront.onrender.com,.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://shopfront.onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://shopfront.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shopfront-db
+          property: connectionString
+      - key: CREATE_SUPERUSER
+        value: "true"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: "admin"
+      - key: DJANGO_SUPERUSER_PASSWORD
+        value: "admin12345"
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: "admin@shopfront.dev"
+
+databases:
+  - name: shopfront-db
+    plan: free
+    databaseName: shopfront
+    user: shopfront

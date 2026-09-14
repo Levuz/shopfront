@@ -1,0 +1,37 @@
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.muhit/
+env/
+
+# ─── Django ───
+db.sqlite3
+db.sqlite3-journal
+django/media/
+django/staticfiles/
+django/frontend_dist/
+*.log
+
+# ─── Node ───
+node_modules/
+react/dist/
+react/.vite/
+npm-debug.log*
+yarn-error.log*
+
+# ─── Env ───
+.env
+.env.local
+.env.*.local
+
+# ─── IDE ───
+.vscode/
+.idea/
+*.swp
+
+# ─── OS ───
+.DS_Store
+Thumbs.db
