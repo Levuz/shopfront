@@ -35,11 +35,6 @@ export default function Login() {
     }
   };
 
-  const fillDemo = (u, p) => {
-    setForm({ username: u, password: p });
-    toast.info(`Demo ${u === 'admin' ? 'admin' : 'customer'} credentials filled`);
-  };
-
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
@@ -114,20 +109,6 @@ export default function Login() {
             </Link>
           </p>
         </form>
-
-        <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-white/60 p-4 text-xs dark:border-slate-700 dark:bg-slate-900/40">
-          <p className="mb-2 font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            Demo accounts
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            <button onClick={() => fillDemo('admin', 'admin12345')} className="btn-outline !py-2 !text-xs">
-              👑 Admin
-            </button>
-            <button onClick={() => fillDemo('customer', 'customer12345')} className="btn-outline !py-2 !text-xs">
-              🛒 Customer
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
