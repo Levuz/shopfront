@@ -21,10 +21,8 @@ export default function Pagination({ page, totalPages, onChange }) {
 
       {start > 1 && (
         <>
-          <button onClick={() => onChange(1)} className="btn-outline !px-3.5 !py-2">
-            1
-          </button>
-          {start > 2 && <span className="px-1 text-slate-400">…</span>}
+          <button onClick={() => onChange(1)} className="btn-outline !px-3.5 !py-2">1</button>
+          {start > 2 && <span className="px-1 text-slate-400 dark:text-slate-500">…</span>}
         </>
       )}
 
@@ -44,7 +42,7 @@ export default function Pagination({ page, totalPages, onChange }) {
 
       {end < totalPages && (
         <>
-          {end < totalPages - 1 && <span className="px-1 text-slate-400">…</span>}
+          {end < totalPages - 1 && <span className="px-1 text-slate-400 dark:text-slate-500">…</span>}
           <button onClick={() => onChange(totalPages)} className="btn-outline !px-3.5 !py-2">
             {totalPages}
           </button>

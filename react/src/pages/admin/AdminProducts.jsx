@@ -9,13 +9,7 @@ import EmptyState from '../../components/EmptyState';
 import Pagination from '../../components/Pagination';
 
 const emptyForm = {
-  title: '',
-  description: '',
-  price: '',
-  stock: '',
-  category: '',
-  is_active: true,
-  image: null,
+  title: '', description: '', price: '', stock: '', category: '', is_active: true, image: null,
 };
 
 export default function AdminProducts() {
@@ -27,7 +21,7 @@ export default function AdminProducts() {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
 
-  const [modal, setModal] = useState(null);        // { mode, product }
+  const [modal, setModal] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -48,9 +42,7 @@ export default function AdminProducts() {
     }
   }, [page, search, toast]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   useEffect(() => {
     api.get('/categories/')
@@ -87,7 +79,6 @@ export default function AdminProducts() {
     if (!form.title || form.price === '' || form.stock === '') {
       return toast.error('Title, price and stock are required.');
     }
-
     setSaving(true);
     try {
       const fd = new FormData();
@@ -100,24 +91,17 @@ export default function AdminProducts() {
       if (form.image) fd.append('image', form.image);
 
       if (modal.mode === 'create') {
-        await api.post('/admin/products/', fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        await api.post('/admin/products/', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         toast.success('Product created');
       } else {
-        await api.put(`/admin/products/${modal.product.id}/`, fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        await api.put(`/admin/products/${modal.product.id}/`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
         toast.success('Product updated');
       }
       closeModal();
       fetchProducts();
     } catch (err) {
       const data = err.response?.data;
-      const msg =
-        data && typeof data === 'object'
-          ? Object.values(data).flat()[0]
-          : 'Save failed';
+      const msg = data && typeof data === 'object' ? Object.values(data).flat()[0] : 'Save failed';
       toast.error(String(msg));
     } finally {
       setSaving(false);
@@ -144,25 +128,17 @@ export default function AdminProducts() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-slate-900 sm:text-2xl">Products</h1>
-          <p className="mt-0.5 text-sm text-slate-500">Manage your product catalogue.</p>
+          <h1 className="text-xl font-extrabold text-slate-900 dark:text-slate-100 sm:text-2xl">Products</h1>
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">Manage your product catalogue.</p>
         </div>
-        <button onClick={openCreate} className="btn-primary">
-          <Plus size={16} /> New product
-        </button>
+        <button onClick={openCreate} className="btn-primary"><Plus size={16} /> New product</button>
       </div>
 
       <div className="relative max-w-md">
-        <Search
-          size={17}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-        />
+        <Search size={17} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
         <input
           value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search products…"
           className="input pl-10"
         />
@@ -171,15 +147,12 @@ export default function AdminProducts() {
       {loading ? (
         <Loader />
       ) : products.length === 0 ? (
-        <EmptyState
-          title="No products yet"
-          description="Create your first product to get started."
-        />
+        <EmptyState title="No products yet" description="Create your first product to get started." />
       ) : (
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px] text-sm">
-              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/50 dark:text-slate-400">
                 <tr>
                   <th className="px-5 py-3 text-left font-semibold">Product</th>
                   <th className="px-5 py-3 text-left font-semibold">Category</th>
@@ -189,67 +162,49 @@ export default function AdminProducts() {
                   <th className="px-5 py-3 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {products.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/60">
+                  <tr key={p.id} className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-100">
+                        <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
                           {p.image_url ? (
-                            <img
-                              src={p.image_url}
-                              alt={p.title}
-                              className="h-full w-full object-cover"
-                            />
+                            <img src={p.image_url} alt={p.title} className="h-full w-full object-cover" />
                           ) : (
-                            <div className="flex h-full w-full items-center justify-center text-slate-300">
+                            <div className="flex h-full w-full items-center justify-center text-slate-300 dark:text-slate-600">
                               <ImageOff size={14} />
                             </div>
                           )}
                         </div>
-                        <p className="line-clamp-1 font-semibold text-slate-800">
-                          {p.title}
-                        </p>
+                        <p className="line-clamp-1 font-semibold text-slate-800 dark:text-slate-100">{p.title}</p>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-slate-600">
-                      {p.category_name || '—'}
-                    </td>
-                    <td className="px-5 py-3 text-right font-semibold text-slate-800">
+                    <td className="px-5 py-3 text-slate-600 dark:text-slate-300">{p.category_name || '—'}</td>
+                    <td className="px-5 py-3 text-right font-semibold text-slate-800 dark:text-slate-100">
                       ${Number(p.price).toFixed(2)}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <span
-                        className={`font-semibold ${
-                          p.stock === 0
-                            ? 'text-red-600'
-                            : p.stock <= 5
-                            ? 'text-amber-600'
-                            : 'text-slate-700'
-                        }`}
-                      >
-                        {p.stock}
-                      </span>
+                      <span className={`font-semibold ${
+                        p.stock === 0 ? 'text-red-600 dark:text-red-400'
+                        : p.stock <= 5 ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-slate-700 dark:text-slate-300'
+                      }`}>{p.stock}</span>
                     </td>
                     <td className="px-5 py-3 text-center">
                       {p.is_active ? (
-                        <span className="badge bg-emerald-100 text-emerald-700">Active</span>
+                        <span className="badge bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Active</span>
                       ) : (
-                        <span className="badge bg-slate-100 text-slate-600">Hidden</span>
+                        <span className="badge bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">Hidden</span>
                       )}
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={() => openEdit(p)}
-                          className="btn-ghost !p-2"
-                          aria-label="Edit"
-                        >
+                        <button onClick={() => openEdit(p)} className="btn-ghost !p-2" aria-label="Edit">
                           <Pencil size={15} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(p)}
-                          className="btn-ghost !p-2 text-red-500 hover:!bg-red-50 hover:text-red-700"
+                          className="btn-ghost !p-2 text-red-500 hover:!bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:!bg-red-900/20"
                           aria-label="Delete"
                         >
                           <Trash2 size={15} />
@@ -266,7 +221,6 @@ export default function AdminProducts() {
 
       <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
-      {/* ------------------------------------------ Create/Edit modal */}
       {modal && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
@@ -274,10 +228,10 @@ export default function AdminProducts() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="max-h-[92vh] w-full max-w-lg animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-6 shadow-2xl sm:rounded-2xl sm:p-7"
+            className="max-h-[92vh] w-full max-w-lg animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-6 shadow-2xl dark:bg-slate-900 sm:rounded-2xl sm:p-7"
           >
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                 {modal.mode === 'create' ? 'New product' : 'Edit product'}
               </h2>
               <button onClick={closeModal} className="btn-ghost !p-2" aria-label="Close">
@@ -312,24 +266,19 @@ export default function AdminProducts() {
                 <div>
                   <label className="label">Price ($) *</label>
                   <input
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    type="number" step="0.01" min="0"
                     value={form.price}
                     onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-                    className="input"
-                    required
+                    className="input" required
                   />
                 </div>
                 <div>
                   <label className="label">Stock *</label>
                   <input
-                    type="number"
-                    min="0"
+                    type="number" min="0"
                     value={form.stock}
                     onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
-                    className="input"
-                    required
+                    className="input" required
                   />
                 </div>
               </div>
@@ -343,9 +292,7 @@ export default function AdminProducts() {
                 >
                   <option value="">— No category —</option>
                   {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
+                    <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
               </div>
@@ -355,10 +302,8 @@ export default function AdminProducts() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, image: e.target.files?.[0] || null }))
-                  }
-                  className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100"
+                  onChange={(e) => setForm((f) => ({ ...f, image: e.target.files?.[0] || null }))}
+                  className="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 dark:text-slate-300 dark:file:bg-brand-900/30 dark:file:text-brand-300"
                 />
               </div>
 
@@ -366,30 +311,16 @@ export default function AdminProducts() {
                 <input
                   type="checkbox"
                   checked={form.is_active}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, is_active: e.target.checked }))
-                  }
-                  className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.checked }))}
+                  className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-800"
                 />
-                <span className="text-sm text-slate-700">Visible on storefront</span>
+                <span className="text-sm text-slate-700 dark:text-slate-300">Visible on storefront</span>
               </label>
 
               <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="btn-outline flex-1"
-                >
-                  Cancel
-                </button>
+                <button type="button" onClick={closeModal} className="btn-outline flex-1">Cancel</button>
                 <button type="submit" disabled={saving} className="btn-primary flex-1">
-                  {saving ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" /> Saving…
-                    </>
-                  ) : (
-                    'Save product'
-                  )}
+                  {saving ? <><Loader2 size={16} className="animate-spin" /> Saving…</> : 'Save product'}
                 </button>
               </div>
             </form>
@@ -397,7 +328,6 @@ export default function AdminProducts() {
         </div>
       )}
 
-      {/* ------------------------------------------ Delete confirm */}
       {deleteTarget && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
@@ -405,35 +335,19 @@ export default function AdminProducts() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm animate-fade-in rounded-2xl bg-white p-6 text-center shadow-2xl"
+            className="w-full max-w-sm animate-fade-in rounded-2xl bg-white p-6 text-center shadow-2xl dark:bg-slate-900"
           >
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
               <AlertTriangle size={26} />
             </div>
-            <h2 className="mt-4 text-lg font-bold text-slate-900">Delete product?</h2>
-            <p className="mt-1.5 text-sm text-slate-500">
+            <h2 className="mt-4 text-lg font-bold text-slate-900 dark:text-slate-100">Delete product?</h2>
+            <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
               “{deleteTarget.title}” will be permanently removed. This cannot be undone.
             </p>
             <div className="mt-6 flex gap-3">
-              <button
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleting}
-                className="btn-outline flex-1"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                disabled={deleting}
-                className="btn-danger flex-1"
-              >
-                {deleting ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" /> Deleting…
-                  </>
-                ) : (
-                  'Delete'
-                )}
+              <button onClick={() => setDeleteTarget(null)} disabled={deleting} className="btn-outline flex-1">Cancel</button>
+              <button onClick={confirmDelete} disabled={deleting} className="btn-danger flex-1">
+                {deleting ? <><Loader2 size={16} className="animate-spin" /> Deleting…</> : 'Delete'}
               </button>
             </div>
           </div>

@@ -74,26 +74,22 @@ export default function Products() {
 
   return (
     <div className="container-app py-8 lg:py-12">
-      {/* Header */}
       <div className="mb-7">
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
           {category
             ? categories.find((c) => c.slug === category)?.name || 'Products'
             : 'All Products'}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {loading
-            ? 'Loading…'
-            : `${data.count} product${data.count === 1 ? '' : 's'} found`}
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {loading ? 'Loading…' : `${data.count} product${data.count === 1 ? '' : 's'} found`}
         </p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[250px_1fr]">
-        {/* -------------------------------------------- Sidebar */}
         <aside className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
           <div className="card sticky top-24 space-y-6 p-5">
             <div>
-              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-900">
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
                 Category
               </h3>
               <div className="space-y-1">
@@ -101,8 +97,8 @@ export default function Products() {
                   onClick={() => setParam('category', '')}
                   className={`block w-full rounded-lg px-3 py-2 text-left text-sm transition ${
                     !category
-                      ? 'bg-brand-50 font-semibold text-brand-700'
-                      : 'text-slate-600 hover:bg-slate-100'
+                      ? 'bg-brand-50 font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'
+                      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                   }`}
                 >
                   All categories
@@ -113,38 +109,36 @@ export default function Products() {
                     onClick={() => setParam('category', c.slug)}
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition ${
                       category === c.slug
-                        ? 'bg-brand-50 font-semibold text-brand-700'
-                        : 'text-slate-600 hover:bg-slate-100'
+                        ? 'bg-brand-50 font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'
+                        : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                     }`}
                   >
                     <span className="truncate">{c.name}</span>
-                    <span className="ml-2 shrink-0 text-xs text-slate-400">
-                      {c.product_count}
-                    </span>
+                    <span className="ml-2 shrink-0 text-xs text-slate-400 dark:text-slate-500">{c.product_count}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="border-t border-slate-100 pt-5">
-              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-900">
+            <div className="border-t border-slate-100 pt-5 dark:border-slate-800">
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100">
                 Availability
               </h3>
-              <label className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 hover:bg-slate-50">
+              <label className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800">
                 <input
                   type="checkbox"
                   checked={inStock}
                   onChange={(e) => setParam('in_stock', e.target.checked ? '1' : '')}
-                  className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:border-slate-600 dark:bg-slate-800"
                 />
-                <span className="text-sm text-slate-600">In stock only</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">In stock only</span>
               </label>
             </div>
 
             {hasFilters && (
               <button
                 onClick={() => setParams(new URLSearchParams())}
-                className="btn-outline w-full border-red-200 text-red-600 hover:bg-red-50"
+                className="btn-outline w-full border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-900/20"
               >
                 <X size={15} /> Clear filters
               </button>
@@ -152,14 +146,10 @@ export default function Products() {
           </div>
         </aside>
 
-        {/* ----------------------------------------------- Main */}
         <div>
           <div className="mb-6 flex flex-wrap items-center gap-3">
             <div className="relative flex-1 min-w-[180px]">
-              <Search
-                size={17}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-              />
+              <Search size={17} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 defaultValue={search}
                 onKeyDown={(e) => e.key === 'Enter' && setParam('search', e.target.value)}
@@ -174,25 +164,18 @@ export default function Products() {
               className="input w-auto min-w-[180px]"
             >
               {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
+                <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
 
-            <button
-              onClick={() => setShowFilters((v) => !v)}
-              className="btn-outline lg:hidden"
-            >
+            <button onClick={() => setShowFilters((v) => !v)} className="btn-outline lg:hidden">
               <SlidersHorizontal size={16} /> Filters
             </button>
           </div>
 
           {loading ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
+              {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : data.results.length === 0 ? (
             <EmptyState
@@ -204,9 +187,7 @@ export default function Products() {
           ) : (
             <>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-                {data.results.map((p) => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
+                {data.results.map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
               <Pagination
                 page={page}

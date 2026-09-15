@@ -9,13 +9,9 @@ export function Spinner({ size = 20, className = '' }) {
 
 export default function Loader({ label = 'Loading…', full = false }) {
   return (
-    <div
-      className={`flex flex-col items-center justify-center gap-3 ${
-        full ? 'min-h-[60vh]' : 'py-16'
-      }`}
-    >
-      <Spinner size={32} className="text-brand-600" />
-      <p className="text-sm text-slate-500">{label}</p>
+    <div className={`flex flex-col items-center justify-center gap-3 ${full ? 'min-h-[60vh]' : 'py-16'}`}>
+      <Spinner size={32} className="text-brand-600 dark:text-brand-400" />
+      <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }
@@ -23,11 +19,11 @@ export default function Loader({ label = 'Loading…', full = false }) {
 export function SkeletonCard() {
   return (
     <div className="card overflow-hidden">
-      <div className="aspect-square animate-pulse bg-slate-200" />
+      <div className="aspect-square animate-pulse bg-slate-200 dark:bg-slate-800" />
       <div className="space-y-3 p-4">
-        <div className="h-3 w-1/3 animate-pulse rounded bg-slate-200" />
-        <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200" />
-        <div className="h-5 w-1/2 animate-pulse rounded bg-slate-200" />
+        <div className="h-3 w-1/3 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+        <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+        <div className="h-5 w-1/2 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
       </div>
     </div>
   );

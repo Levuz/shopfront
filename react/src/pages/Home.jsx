@@ -70,10 +70,8 @@ export default function Home() {
               <Link to="/products" className="btn-primary !px-6 !py-3 text-base">
                 Shop Now <ArrowRight size={18} />
               </Link>
-              <Link
-                to="/products?ordering=-price"
-                className="btn !px-6 !py-3 text-base border border-white/20 text-white hover:bg-white/10"
-              >
+              <Link to="/products?ordering=-price"
+                className="btn !px-6 !py-3 text-base border border-white/20 text-white hover:bg-white/10">
                 Browse Best Sellers
               </Link>
             </div>
@@ -95,26 +93,11 @@ export default function Home() {
           <div className="relative hidden lg:block">
             <div className="grid grid-cols-2 gap-4">
               {products.slice(0, 4).map((p, i) => (
-                <div
-                  key={p.id}
-                  className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur ${
-                    i % 2 === 1 ? 'translate-y-6' : ''
-                  }`}
-                >
+                <div key={p.id}
+                  className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur ${i % 2 === 1 ? 'translate-y-6' : ''}`}>
                   <div className="aspect-square bg-slate-800">
                     {p.image_url ? (
-                      <img
-                        src={p.image_url}
-                        alt={p.title}
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.parentElement.innerHTML =
-                            '<div class="flex h-full w-full items-center justify-center text-slate-500"><span class="text-xs font-semibold uppercase tracking-wider">' +
-                            (p.category_name || 'Product') +
-                            '</span></div>';
-                        }}
-                      />
+                      <img src={p.image_url} alt={p.title} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-slate-500">
                         <span className="text-xs font-semibold uppercase tracking-wider">
@@ -125,39 +108,21 @@ export default function Home() {
                   </div>
                 </div>
               ))}
-              {products.length === 0 && !loading && (
-                <>
-                  {[0, 1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className={`overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur ${
-                        i % 2 === 1 ? 'translate-y-6' : ''
-                      }`}
-                    >
-                      <div className="aspect-square bg-slate-800 flex items-center justify-center">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                          Coming soon
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-b border-slate-200 bg-white">
+      <section className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="container-app grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
           {PERKS.map(({ icon: Icon, title, text }) => (
             <div key={title} className="flex items-center gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
                 <Icon size={20} />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-900">{title}</p>
-                <p className="truncate text-xs text-slate-500">{text}</p>
+                <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</p>
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">{text}</p>
               </div>
             </div>
           ))}
@@ -168,33 +133,28 @@ export default function Home() {
         <section className="container-app py-14">
           <div className="mb-7 flex items-end justify-between">
             <div>
-              <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+              <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                 Shop by category
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 Find exactly what you're looking for
               </p>
             </div>
-            <Link
-              to="/products"
-              className="hidden text-sm font-semibold text-brand-600 hover:text-brand-700 sm:flex items-center gap-1"
-            >
+            <Link to="/products"
+              className="hidden text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 sm:flex items-center gap-1">
               View all <ArrowRight size={15} />
             </Link>
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {categories.slice(0, 6).map((c) => (
-              <Link
-                key={c.id}
-                to={`/products?category=${c.slug}`}
-                className="card group flex flex-col items-center gap-2 p-5 text-center transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-lift"
-              >
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-lg font-bold text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
+              <Link key={c.id} to={`/products?category=${c.slug}`}
+                className="card group flex flex-col items-center gap-2 p-5 text-center transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-lift dark:hover:border-brand-500">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-lg font-bold text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white dark:bg-brand-900/30 dark:text-brand-400 dark:group-hover:bg-brand-500 dark:group-hover:text-white">
                   {c.name.charAt(0)}
                 </span>
-                <span className="text-sm font-semibold text-slate-800">{c.name}</span>
-                <span className="text-xs text-slate-400">{c.product_count} items</span>
+                <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{c.name}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{c.product_count} items</span>
               </Link>
             ))}
           </div>
@@ -204,45 +164,34 @@ export default function Home() {
       <section className="container-app pb-14">
         <div className="mb-7 flex items-end justify-between">
           <div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+            <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
               Featured products
             </h2>
-            <p className="mt-1 text-sm text-slate-500">Hand-picked just for you</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Hand-picked just for you</p>
           </div>
-          <Link
-            to="/products"
-            className="hidden text-sm font-semibold text-brand-600 hover:text-brand-700 sm:flex items-center gap-1"
-          >
+          <Link to="/products"
+            className="hidden text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 sm:flex items-center gap-1">
             View all <ArrowRight size={15} />
           </Link>
         </div>
 
         {loading ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+            {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : products.length === 0 ? (
-          <div className="card p-12 text-center text-sm text-slate-500">
+          <div className="card p-12 text-center text-sm text-slate-500 dark:text-slate-400">
             No products yet. Run{' '}
-            <code className="rounded bg-slate-100 px-1.5 py-0.5">
-              python manage.py seed_data
-            </code>
-            .
+            <code className="rounded bg-slate-100 px-1.5 py-0.5 dark:bg-slate-800">python manage.py seed_data</code>.
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+            {products.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         )}
 
         <div className="mt-8 flex justify-center sm:hidden">
-          <Link to="/products" className="btn-outline w-full">
-            View all products
-          </Link>
+          <Link to="/products" className="btn-outline w-full">View all products</Link>
         </div>
       </section>
 
@@ -255,16 +204,11 @@ export default function Home() {
               Get 20% off your first order
             </h3>
             <p className="mt-3 text-brand-100">
-              Use code{' '}
-              <span className="rounded bg-white/15 px-2 py-0.5 font-mono font-bold text-white">
-                WELCOME20
-              </span>{' '}
-              at checkout. Free shipping on orders over $100.
+              Use code <span className="rounded bg-white/15 px-2 py-0.5 font-mono font-bold text-white">WELCOME20</span> at checkout.
+              Free shipping on orders over $100.
             </p>
-            <Link
-              to="/products"
-              className="btn mt-7 bg-white !px-6 !py-3 text-base font-bold text-brand-700 hover:bg-brand-50"
-            >
+            <Link to="/products"
+              className="btn mt-7 bg-white !px-6 !py-3 text-base font-bold text-brand-700 hover:bg-brand-50">
               Start shopping <ArrowRight size={18} />
             </Link>
           </div>
